@@ -13,15 +13,18 @@ import io.netty.handler.ssl.SslHandler;
 
 import javax.net.ssl.SSLEngine;
 import java.net.InetSocketAddress;
+import java.nio.channels.SocketChannel;
 
 public class HttpChannelHandler extends BaseChannelHandler<HttpMessage> {
 
     private volatile HttpRequest request;
 
     private final EventLoopGroup workerGroup;
+    private final Class<? extends Channel> channelClass;
 
-    public HttpChannelHandler(EventLoopGroup workerGroup) {
+    public HttpChannelHandler(EventLoopGroup workerGroup, Class<? extends Channel> channelClass) {
         this.workerGroup = workerGroup;
+        this.channelClass = channelClass;
     }
 
     @Override
@@ -80,7 +83,7 @@ public class HttpChannelHandler extends BaseChannelHandler<HttpMessage> {
     private Bootstrap buildBootstrap(Channel source, boolean needSsl) {
         return new Bootstrap()
                 .group(workerGroup)
-                .channel(source.getClass())
+                .channel(channelClass)
                 .handler(new ChannelInitializer() {
 
                     @Override

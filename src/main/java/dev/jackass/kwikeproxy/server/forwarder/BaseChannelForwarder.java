@@ -6,7 +6,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 
 public abstract class BaseChannelForwarder<T> extends SimpleChannelInboundHandler<T>  {
 
-    private Channel destination;
+    private final Channel destination;
 
     public BaseChannelForwarder(Channel destination) {
         this.destination = destination;
@@ -15,6 +15,7 @@ public abstract class BaseChannelForwarder<T> extends SimpleChannelInboundHandle
     @Override
     protected void channelRead0(ChannelHandlerContext context, T message) throws Exception {
         forward(destination, message);
+
     }
 
     protected abstract void forward(Channel destination, T message);

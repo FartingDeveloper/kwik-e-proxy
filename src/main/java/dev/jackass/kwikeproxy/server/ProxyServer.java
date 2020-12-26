@@ -35,11 +35,11 @@ public class ProxyServer implements Runnable {
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
-                    .channel(config.getOptionsConfig().getChannelClass())
+                    .channel(config.getOptionsConfig().getServerChannelClass())
                     .option(ChannelOption.SO_BACKLOG, config.getOptionsConfig().getBacklog())
-                    .childOption(ChannelOption.SO_KEEPALIVE,  config.getOptionsConfig().isKeepAlive())
+                    .childOption(ChannelOption.SO_KEEPALIVE, config.getOptionsConfig().isKeepAlive())
                     .childHandler(config.getProtocol() == Protocol.HTTP
-                            ? new HttpChannelInitializer(workerGroup)
+                            ? new HttpChannelInitializer(workerGroup, config.getOptionsConfig().getClientChannelClass())
                             : null
                     );
 

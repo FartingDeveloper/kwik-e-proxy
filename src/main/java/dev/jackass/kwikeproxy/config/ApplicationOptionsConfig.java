@@ -1,12 +1,15 @@
 package dev.jackass.kwikeproxy.config;
 
+import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.ServerChannel;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
+import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,7 +30,11 @@ public class ApplicationOptionsConfig {
         this.epoll = epoll;
     }
 
-    public Class<? extends ServerChannel> getChannelClass() {
+    public Class<? extends Channel> getClientChannelClass() {
+        return epoll ? Epoll.isAvailable() ? EpollSocketChannel.class : NioSocketChannel.class : NioSocketChannel.class;
+    }
+
+    public Class<? extends ServerChannel> getServerChannelClass() {
         return epoll ? Epoll.isAvailable() ? EpollServerSocketChannel.class : NioServerSocketChannel.class : NioServerSocketChannel.class;
     }
 
