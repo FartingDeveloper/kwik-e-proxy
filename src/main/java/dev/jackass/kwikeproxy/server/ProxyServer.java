@@ -1,7 +1,7 @@
 package dev.jackass.kwikeproxy.server;
 
 import dev.jackass.kwikeproxy.config.ApplicationConfig;
-import dev.jackass.kwikeproxy.server.initializer.http.HttpTunnelInitializer;
+import dev.jackass.kwikeproxy.server.initializer.http.HttpChannelInitializer;
 import dev.jackass.kwikeproxy.server.protocol.Protocol;
 import dev.jackass.kwikeproxy.util.ExceptionUtil;
 import io.netty.bootstrap.ServerBootstrap;
@@ -29,17 +29,17 @@ public class ProxyServer implements Runnable {
 
     @Override
     public void run() {
-        EventLoopGroup bossGroup = config.getOptions().getBossEventLoopGroup();
-        EventLoopGroup workerGroup = config.getOptions().getWorkerEventLoopGroup();
+        EventLoopGroup bossGroup = config.getOptionsConfig().getBossEventLoopGroup();
+        EventLoopGroup workerGroup = config.getOptionsConfig().getWorkerEventLoopGroup();
 
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
-                    .channel(config.getOptions().getChannelClass())
-                    .option(ChannelOption.SO_BACKLOG, config.getOptions().getBacklog())
-                    .childOption(ChannelOption.SO_KEEPALIVE,  config.getOptions().isKeepAlive())
+                    .channel(config.getOptionsConfig().getChannelClass())
+                    .option(ChannelOption.SO_BACKLOG, config.getOptionsConfig().getBacklog())
+                    .childOption(ChannelOption.SO_KEEPALIVE,  config.getOptionsConfig().isKeepAlive())
                     .childHandler(config.getProtocol() == Protocol.HTTP
-                            ? new HttpTunnelInitializer()
+                            ? new HttpChannelInitializer(workerGroup)
                             : null
                     );
 

@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class ApplicationConfig {
 
     @Autowired
-    private ApplicationOptionsConfig options;
+    private ApplicationOptionsConfig optionsConfig;
 
     private int port;
     private Protocol protocol;
@@ -31,7 +31,7 @@ public class ApplicationConfig {
         this.protocol = protocol;
     }
 
-    public ApplicationOptionsConfig getOptions() {
-        return options;
+    public ApplicationOptionsConfig getOptionsConfig() {
+        return optionsConfig;
     }
 }
