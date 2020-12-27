@@ -64,20 +64,20 @@ public class HttpChannelHandler extends BaseChannelHandler<HttpMessage> {
     }
 
     private void tunnel(Channel source, Channel destination) {
+        HttpUtil.sendOk(source);
+
         source.pipeline().remove(HttpServerCodec.class);
         source.pipeline().remove(HttpChannelHandler.class);
 
         source.pipeline().addLast(new RawChannelForwarder(destination));
-
-        HttpUtil.sendOk(source);
     }
 
     private void forward(Channel channel, HttpRequest request, Channel destination) {
+        HttpUtil.sendMessage(destination, request);
+
         channel.pipeline().remove(HttpChannelHandler.class);
 
         channel.pipeline().addLast(new HttpChannelForwarder(destination));
-
-        HttpUtil.sendMessage(destination, request);
     }
 
     private Bootstrap buildBootstrap(Channel source, boolean needSsl) {
@@ -89,10 +89,6 @@ public class HttpChannelHandler extends BaseChannelHandler<HttpMessage> {
                     @Override
                     protected void initChannel(Channel destination) throws Exception {
                         if (needSsl) {
-                            SslContext context = SslUtil.buildClientSslContext();
-                            SSLEngine engine = context.newEngine(destination.alloc());
-
-                            destination.pipeline().addLast(new SslHandler(engine));
                             destination.pipeline().addLast(new RawChannelForwarder(source));
                         } else {
                             destination.pipeline().addLast(new HttpClientCodec());
