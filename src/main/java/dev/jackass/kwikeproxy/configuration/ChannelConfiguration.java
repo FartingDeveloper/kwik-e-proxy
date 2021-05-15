@@ -1,4 +1,4 @@
-package dev.jackass.kwikeproxy.config;
+package dev.jackass.kwikeproxy.configuration;
 
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
@@ -14,13 +14,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "application.options")
-public class ApplicationOptionsConfig {
+@ConfigurationProperties(prefix = "application.channel")
+public class ChannelConfiguration {
 
     private int backlog;
 
     private boolean epoll;
     private boolean keepAlive;
+    private boolean tcpNoDelay;
 
     public boolean isEpoll() {
         return epoll;
@@ -60,6 +61,14 @@ public class ApplicationOptionsConfig {
 
     public void setKeepAlive(boolean keepAlive) {
         this.keepAlive = keepAlive;
+    }
+
+    public boolean isTcpNoDelay() {
+        return tcpNoDelay;
+    }
+
+    public void setTcpNoDelay(boolean tcpNoDelay) {
+        this.tcpNoDelay = tcpNoDelay;
     }
 
 }

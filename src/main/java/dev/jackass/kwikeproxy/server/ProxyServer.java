@@ -1,8 +1,8 @@
 package dev.jackass.kwikeproxy.server;
 
-import dev.jackass.kwikeproxy.config.ApplicationConfig;
-import dev.jackass.kwikeproxy.server.initializer.http.HttpChannelInitializer;
-import dev.jackass.kwikeproxy.server.protocol.Protocol;
+import dev.jackass.kwikeproxy.configuration.ChannelConfiguration;
+import dev.jackass.kwikeproxy.configuration.ServerConfiguration;
+import dev.jackass.kwikeproxy.server.initializer.http.HttpProxyInitializer;
 import dev.jackass.kwikeproxy.util.ExceptionUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelOption;
@@ -20,30 +20,34 @@ public class ProxyServer implements Runnable {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProxyServer.class);
 
-    private final ApplicationConfig config;
+    private final ServerConfiguration serverConfig;
+    private final ChannelConfiguration channelConfig;
 
     @Autowired
-    public ProxyServer(ApplicationConfig config) {
-        this.config = config;
+    public ProxyServer(ServerConfiguration serverConfig, ChannelConfiguration channelConfig) {
+        this.serverConfig = serverConfig;
+        this.channelConfig = channelConfig;
     }
 
     @Override
     public void run() {
-        EventLoopGroup bossGroup = config.getOptionsConfig().getBossEventLoopGroup();
-        EventLoopGroup workerGroup = config.getOptionsConfig().getWorkerEventLoopGroup();
+        EventLoopGroup bossGroup = channelConfig.getBossEventLoopGroup();
+        EventLoopGroup workerGroup = channelConfig.getWorkerEventLoopGroup();
 
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
-                    .channel(config.getOptionsConfig().getServerChannelClass())
-                    .option(ChannelOption.SO_BACKLOG, config.getOptionsConfig().getBacklog())
-                    .childOption(ChannelOption.SO_KEEPALIVE, config.getOptionsConfig().isKeepAlive())
-                    .childHandler(config.getProtocol() == Protocol.HTTP
-                            ? new HttpChannelInitializer(workerGroup, config.getOptionsConfig().getClientChannelClass())
-                            : null
+                    .channel(channelConfig.getServerChannelClass())
+                    .option(ChannelOption.SO_BACKLOG, channelConfig.getBacklog())
+                    .option(ChannelOption.SO_KEEPALIVE, channelConfig.isKeepAlive())
+                    .option(ChannelOption.TCP_NODELAY, channelConfig.isTcpNoDelay())
+                    .childHandler(
+                            serverConfig.getProtocol() == Protocol.HTTP
+                                    ? new HttpProxyInitializer(workerGroup, channelConfig.getClientChannelClass())
+                                    : null
                     );
 
-            b.bind(config.getPort())
+            b.bind(serverConfig.getPort())
                     .sync()
                     .channel()
                     .closeFuture()

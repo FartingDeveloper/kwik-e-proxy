@@ -1,16 +1,13 @@
-package dev.jackass.kwikeproxy.config;
+package dev.jackass.kwikeproxy.configuration;
 
-import dev.jackass.kwikeproxy.server.protocol.Protocol;
+import dev.jackass.kwikeproxy.server.Protocol;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "application")
-public class ApplicationConfig {
-
-    @Autowired
-    private ApplicationOptionsConfig optionsConfig;
+@ConfigurationProperties(prefix = "application.server")
+public class ServerConfiguration {
 
     private int port;
     private Protocol protocol;
@@ -31,7 +28,4 @@ public class ApplicationConfig {
         this.protocol = protocol;
     }
 
-    public ApplicationOptionsConfig getOptionsConfig() {
-        return optionsConfig;
-    }
 }

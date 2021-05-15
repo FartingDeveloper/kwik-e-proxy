@@ -1,7 +1,6 @@
 package dev.jackass.kwikeproxy.server.initializer;
 
-import dev.jackass.kwikeproxy.server.protocol.Protocol;
-import dev.jackass.kwikeproxy.server.protocol.ProtocolSupport;
+import dev.jackass.kwikeproxy.server.Protocol;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -9,7 +8,9 @@ import io.netty.channel.ChannelPipeline;
 /**
  * Class represents channel initializer which adds custom handlers depending on {@link Protocol}.
  */
-public abstract class BaseChannelInitializer extends ChannelInitializer<Channel> implements ProtocolSupport {
+public abstract class BaseProxyInitializer extends ChannelInitializer<Channel> {
+
+    protected abstract Protocol getProtocol();
 
     @Override
     protected void initChannel(Channel channel) throws Exception {

@@ -1,9 +1,12 @@
 application:
-  port: 9999
-  protocol: HTTP
-  options:
+  server:
+    port: 9999
+    protocol: HTTP
+
+  channel:
     epoll: true
     keep-alive: true
+    tcp-no-delay: true
     backlog: 128
 
 

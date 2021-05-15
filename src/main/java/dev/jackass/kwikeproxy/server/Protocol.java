@@ -1,4 +1,4 @@
-package dev.jackass.kwikeproxy.server.protocol;
+package dev.jackass.kwikeproxy.server;
 
 /**
  * Enum represents protocol which is used for traffic passing.
